@@ -73,7 +73,7 @@ public class UserDaoHibernateImpl implements UserDao {
 
     @Override
     public List<User> getAllUsers() throws DaoException {
-        try(Session session = DBUtil.getHibernateSession()) {
+        try (Session session = DBUtil.getHibernateSession()) {
             List<User> users = session.createQuery("select u from User u", User.class).getResultList();
 
             LOG.info("Все записи из таблицы User успешно получены!");

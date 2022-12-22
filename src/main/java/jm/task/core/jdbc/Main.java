@@ -3,12 +3,11 @@ package jm.task.core.jdbc;
 import jm.task.core.jdbc.dao.UserDaoJDBCImpl;
 import jm.task.core.jdbc.service.UserService;
 import jm.task.core.jdbc.service.UserServiceImpl;
-
-import java.sql.SQLException;
+import jm.task.core.jdbc.support.DaoException;
 
 public class Main {
 
-    public static void main(String[] args) throws SQLException {
+    public static void main(String[] args) throws DaoException {
         // реализуйте алгоритм здесь
 
         UserService service = new UserServiceImpl(new UserDaoJDBCImpl());
