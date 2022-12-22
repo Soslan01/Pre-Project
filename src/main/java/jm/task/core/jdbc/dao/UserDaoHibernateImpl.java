@@ -24,7 +24,9 @@ public class UserDaoHibernateImpl implements UserDao {
     @Transactional
     public void createUsersTable() throws DaoException {
         Transaction transaction = null;
-        try (Session session = DBUtil.getHibernateSession()) {
+        Session session = null;
+        try {
+            session = DBUtil.getHibernateSession();
             transaction = session.beginTransaction();
             Query query = session.createSQLQuery(createTableSql);
             query.executeUpdate();
@@ -32,10 +34,9 @@ public class UserDaoHibernateImpl implements UserDao {
 
             LOG.info("Table \"users\" is created!");
         } catch (SQLException | HibernateException e) {
+            transaction.rollback();
             LOG.error(e.getMessage());
             throw new DaoException(e.getMessage(), e);
-        } finally {
-            transaction.rollback();
         }
     }
 
@@ -43,7 +44,9 @@ public class UserDaoHibernateImpl implements UserDao {
     @Transactional
     public void dropUsersTable() throws DaoException {
         Transaction transaction = null;
-        try (Session session = DBUtil.getHibernateSession()) {
+        Session session = null;
+        try {
+            session = DBUtil.getHibernateSession();
             transaction = session.beginTransaction();
             Query query = session.createSQLQuery(dropUsersTableSql);
             query.executeUpdate();
@@ -51,10 +54,10 @@ public class UserDaoHibernateImpl implements UserDao {
 
             LOG.info("Table \"users\" is deleted!");
         } catch (SQLException | HibernateException e) {
+            transaction.rollback();
+            session.close();
             LOG.error(e.getMessage());
             throw new DaoException(e.getMessage(), e);
-        } finally {
-            transaction.rollback();
         }
     }
 
@@ -62,7 +65,9 @@ public class UserDaoHibernateImpl implements UserDao {
     @Transactional
     public void saveUser(String name, String lastName, byte age) throws DaoException {
         Transaction transaction = null;
-        try (Session session = DBUtil.getHibernateSession()) {
+        Session session = null;
+        try {
+            session = DBUtil.getHibernateSession();
             transaction = session.beginTransaction();
             User newUser = new User(name, lastName, age);
             session.save(newUser);
@@ -70,10 +75,10 @@ public class UserDaoHibernateImpl implements UserDao {
 
             LOG.info("User с именем - " + name + " добавлен в базу данных!");
         } catch (SQLException | HibernateException e) {
+            transaction.rollback();
+            session.close();
             LOG.error(e.getMessage());
             throw new DaoException(e.getMessage(), e);
-        } finally {
-            transaction.rollback();
         }
     }
 
@@ -81,7 +86,9 @@ public class UserDaoHibernateImpl implements UserDao {
     @Transactional
     public void removeUserById(long id) throws DaoException {
         Transaction transaction = null;
-        try (Session session = DBUtil.getHibernateSession()) {
+        Session session = null;
+        try {
+            session = DBUtil.getHibernateSession();
             transaction = session.beginTransaction();
             User deletedUser = new User();
             deletedUser.setId(id);
@@ -90,10 +97,10 @@ public class UserDaoHibernateImpl implements UserDao {
 
             LOG.info("User с id - " + id + " удален из базы!");
         } catch (SQLException | HibernateException e) {
+            transaction.rollback();
+            session.close();
             LOG.error(e.getMessage());
             throw new DaoException(e.getMessage(), e);
-        } finally {
-            transaction.rollback();
         }
     }
 
@@ -101,7 +108,9 @@ public class UserDaoHibernateImpl implements UserDao {
     @Transactional
     public List<User> getAllUsers() throws DaoException {
         Transaction transaction = null;
-        try (Session session = DBUtil.getHibernateSession()) {
+        Session session = null;
+        try {
+            session = DBUtil.getHibernateSession();
             transaction = session.beginTransaction();
             List<User> users = session.createQuery("select u from User u", User.class).getResultList();
             transaction.commit();
@@ -109,10 +118,10 @@ public class UserDaoHibernateImpl implements UserDao {
             LOG.info("Все записи из таблицы User успешно получены!");
             return users;
         } catch (SQLException | HibernateException e) {
+            transaction.rollback();
+            session.close();
             LOG.error(e.getMessage());
             throw new DaoException(e.getMessage(), e);
-        } finally {
-            transaction.rollback();
         }
     }
 
@@ -120,7 +129,9 @@ public class UserDaoHibernateImpl implements UserDao {
     @Transactional
     public void cleanUsersTable() throws DaoException {
         Transaction transaction = null;
-        try (Session session = DBUtil.getHibernateSession();) {
+        Session session = null;
+        try {
+            session = DBUtil.getHibernateSession();
             transaction = session.beginTransaction();
             Query query = session.createSQLQuery(truncateUsersSql);
             query.executeUpdate();
@@ -128,10 +139,10 @@ public class UserDaoHibernateImpl implements UserDao {
 
             LOG.info("Таблица \"users\" удалена успешно!");
         } catch (SQLException | HibernateException e) {
+            transaction.rollback();
+            session.close();
             LOG.error(e.getMessage());
             throw new DaoException(e.getMessage(), e);
-        } finally {
-            transaction.rollback();
         }
     }
 }
