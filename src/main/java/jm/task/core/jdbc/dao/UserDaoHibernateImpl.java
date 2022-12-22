@@ -37,6 +37,8 @@ public class UserDaoHibernateImpl implements UserDao {
             transaction.rollback();
             LOG.error(e.getMessage());
             throw new DaoException(e.getMessage(), e);
+        } finally {
+            session.close();
         }
     }
 
@@ -55,9 +57,10 @@ public class UserDaoHibernateImpl implements UserDao {
             LOG.info("Table \"users\" is deleted!");
         } catch (SQLException | HibernateException e) {
             transaction.rollback();
-            session.close();
             LOG.error(e.getMessage());
             throw new DaoException(e.getMessage(), e);
+        } finally {
+            session.close();
         }
     }
 
@@ -76,9 +79,10 @@ public class UserDaoHibernateImpl implements UserDao {
             LOG.info("User с именем - " + name + " добавлен в базу данных!");
         } catch (SQLException | HibernateException e) {
             transaction.rollback();
-            session.close();
             LOG.error(e.getMessage());
             throw new DaoException(e.getMessage(), e);
+        } finally {
+            session.close();
         }
     }
 
@@ -98,9 +102,10 @@ public class UserDaoHibernateImpl implements UserDao {
             LOG.info("User с id - " + id + " удален из базы!");
         } catch (SQLException | HibernateException e) {
             transaction.rollback();
-            session.close();
             LOG.error(e.getMessage());
             throw new DaoException(e.getMessage(), e);
+        } finally {
+            session.close();
         }
     }
 
@@ -119,9 +124,10 @@ public class UserDaoHibernateImpl implements UserDao {
             return users;
         } catch (SQLException | HibernateException e) {
             transaction.rollback();
-            session.close();
             LOG.error(e.getMessage());
             throw new DaoException(e.getMessage(), e);
+        } finally {
+            session.close();
         }
     }
 
@@ -140,9 +146,10 @@ public class UserDaoHibernateImpl implements UserDao {
             LOG.info("Таблица \"users\" удалена успешно!");
         } catch (SQLException | HibernateException e) {
             transaction.rollback();
-            session.close();
             LOG.error(e.getMessage());
             throw new DaoException(e.getMessage(), e);
+        } finally {
+            session.close();
         }
     }
 }
