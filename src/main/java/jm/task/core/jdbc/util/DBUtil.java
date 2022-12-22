@@ -1,5 +1,6 @@
 package jm.task.core.jdbc.util;
 
+import jm.task.core.jdbc.model.User;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
@@ -23,6 +24,7 @@ public class DBUtil {
             config.setProperty("hibernate.connection.username", "root");
             config.setProperty("hibernate.connection.password", "sos100398");
             config.setProperty("dialect", "org.hibernate.dialect.MySQL8Dialect");
+            config.addAnnotatedClass(User.class);
             sessionFactory = config.buildSessionFactory();
         } catch (Throwable e) {
             LOG.error("Не удалось выполнить настройку подключения к базе данных: " + e.getMessage());
