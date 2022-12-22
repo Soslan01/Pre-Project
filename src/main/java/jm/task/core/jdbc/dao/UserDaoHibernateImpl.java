@@ -8,6 +8,7 @@ import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.jboss.logging.Logger;
 
+import javax.transaction.Transactional;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -19,6 +20,7 @@ public class UserDaoHibernateImpl implements UserDao {
     private static Logger LOG = Logger.getLogger(UserDaoHibernateImpl.class);
 
     @Override
+    @Transactional
     public void createUsersTable() throws DaoException {
         try (Session session = DBUtil.getHibernateSession()) {
             Query query = session.createSQLQuery(createTableSql);
@@ -32,6 +34,7 @@ public class UserDaoHibernateImpl implements UserDao {
     }
 
     @Override
+    @Transactional
     public void dropUsersTable() throws DaoException {
         try (Session session = DBUtil.getHibernateSession()) {
             Query query = session.createSQLQuery(dropUsersTableSql);
@@ -45,6 +48,7 @@ public class UserDaoHibernateImpl implements UserDao {
     }
 
     @Override
+    @Transactional
     public void saveUser(String name, String lastName, byte age) throws DaoException {
         try (Session session = DBUtil.getHibernateSession()) {
             User newUser = new User(name, lastName, age);
@@ -58,6 +62,7 @@ public class UserDaoHibernateImpl implements UserDao {
     }
 
     @Override
+    @Transactional
     public void removeUserById(long id) throws DaoException {
         try (Session session = DBUtil.getHibernateSession()) {
             User deletedUser = new User();
@@ -72,6 +77,7 @@ public class UserDaoHibernateImpl implements UserDao {
     }
 
     @Override
+    @Transactional
     public List<User> getAllUsers() throws DaoException {
         try (Session session = DBUtil.getHibernateSession()) {
             List<User> users = session.createQuery("select u from User u", User.class).getResultList();
@@ -85,6 +91,7 @@ public class UserDaoHibernateImpl implements UserDao {
     }
 
     @Override
+    @Transactional
     public void cleanUsersTable() throws DaoException {
         try (Session session = DBUtil.getHibernateSession();) {
             Query query = session.createSQLQuery(truncateUsersSql);
