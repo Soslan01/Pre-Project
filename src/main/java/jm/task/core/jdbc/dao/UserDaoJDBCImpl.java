@@ -1,7 +1,7 @@
 package jm.task.core.jdbc.dao;
 
 import jm.task.core.jdbc.model.User;
-import jm.task.core.jdbc.util.Util;
+import jm.task.core.jdbc.util.DBUtil;
 import org.jboss.logging.Logger;
 
 import java.sql.Connection;
@@ -12,20 +12,21 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import static jm.task.core.jdbc.dao.UserQueries.createTableSql;
+import static jm.task.core.jdbc.dao.UserQueries.dropUsersTableSql;
+import static jm.task.core.jdbc.dao.UserQueries.getUsersSql;
+import static jm.task.core.jdbc.dao.UserQueries.insertTableSql;
+import static jm.task.core.jdbc.dao.UserQueries.removeUsersSql;
+import static jm.task.core.jdbc.dao.UserQueries.truncateUsersSql;
+
 public class UserDaoJDBCImpl implements UserDao {
     private static Logger LOG = Logger.getLogger(UserDaoJDBCImpl.class);
 
     //Создание таблицы;
     public void createUsersTable() throws SQLException {
-        String createTableSQL = "CREATE TABLE IF NOT EXISTS USERS("
-                + "ID INT(5) NOT NULL PRIMARY KEY AUTO_INCREMENT UNIQUE, "
-                + "USERNAME VARCHAR(26) NOT NULL, "
-                + "LASTNAME VARCHAR(26) NOT NULL, "
-                + "AGE INT(3) NOT NULL)";
-
-        try (Connection connection = Util.getDBConnection(); Statement statement = connection.createStatement()) {
+        try (Connection connection = DBUtil.getJdbcConnection(); Statement statement = connection.createStatement()) {
             //выполняется SQL запрос в консоли;
-            statement.execute(createTableSQL);
+            statement.execute(createTableSql);
 
             LOG.info("Table \"users\" is created!");
         } catch (SQLException e) {
@@ -36,8 +37,8 @@ public class UserDaoJDBCImpl implements UserDao {
 
     //Удаление таблицы;
     public void dropUsersTable() throws SQLException {
-        try (Connection connection = Util.getDBConnection(); Statement statement = connection.createStatement()) {
-            statement.execute("DROP TABLE IF EXISTS myDBTest.USERS");
+        try (Connection connection = DBUtil.getJdbcConnection(); Statement statement = connection.createStatement()) {
+            statement.execute(dropUsersTableSql);
 
             LOG.info("Table \"users\" is deleted!");
         } catch (SQLException e) {
@@ -48,10 +49,8 @@ public class UserDaoJDBCImpl implements UserDao {
 
     //Добавление пользователя в таблицу;
     public void saveUser(String name, String lastName, byte age) throws SQLException {
-        String insertTableSQL = "INSERT INTO myDBTest.USERS(USERNAME, LASTNAME, AGE) VALUES(?,?,?)";
-
-        try (Connection connection = Util.getDBConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(insertTableSQL)) {
+        try (Connection connection = DBUtil.getJdbcConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(insertTableSql)) {
 
             preparedStatement.setString(1, name);
             preparedStatement.setString(2, lastName);
@@ -67,10 +66,8 @@ public class UserDaoJDBCImpl implements UserDao {
 
     //Удаление пользователя по id;
     public void removeUserById(long id) throws SQLException {
-        String removeUsersSQL = "DELETE FROM myDBTest.USERS WHERE id = ?";
-
-        try (Connection connection = Util.getDBConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(removeUsersSQL)) {
+        try (Connection connection = DBUtil.getJdbcConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(removeUsersSql)) {
             preparedStatement.setLong(1, id);
             preparedStatement.executeUpdate();
 
@@ -84,11 +81,10 @@ public class UserDaoJDBCImpl implements UserDao {
     //Вывод всех пользователей из таблицы;
     public List<User> getAllUsers() throws SQLException {
         List<User> allUsers = new ArrayList<>();
-        String getUsersSQl = "SELECT ID, USERNAME, LASTNAME, AGE FROM myDBTest.USERS";
 
-        try (Connection connection = Util.getDBConnection();
+        try (Connection connection = DBUtil.getJdbcConnection();
              Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(getUsersSQl)) {
+             ResultSet resultSet = statement.executeQuery(getUsersSql)) {
 
             while (resultSet.next()) {
                 User user = new User();
@@ -109,8 +105,8 @@ public class UserDaoJDBCImpl implements UserDao {
 
     //Удаление всех пользователей из таблицы;
     public void cleanUsersTable() throws SQLException {
-        try (Connection connection = Util.getDBConnection(); Statement statement = connection.createStatement()) {
-            statement.executeUpdate("TRUNCATE TABLE USERS");
+        try (Connection connection = DBUtil.getJdbcConnection(); Statement statement = connection.createStatement()) {
+            statement.executeUpdate(truncateUsersSql);
 
             LOG.info("Таблица \"users\" удалена успешно!");
         } catch (SQLException e) {
