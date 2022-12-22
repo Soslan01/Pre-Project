@@ -1,6 +1,7 @@
 package jm.task.core.jdbc.dao;
 
 import jm.task.core.jdbc.model.User;
+import jm.task.core.jdbc.support.CommonDaoException;
 import jm.task.core.jdbc.util.DBUtil;
 import org.jboss.logging.Logger;
 
@@ -23,7 +24,7 @@ public class UserDaoJDBCImpl implements UserDao {
     private static Logger LOG = Logger.getLogger(UserDaoJDBCImpl.class);
 
     //Создание таблицы;
-    public void createUsersTable() throws SQLException {
+    public void createUsersTable() throws CommonDaoException {
         try (Connection connection = DBUtil.getJdbcConnection(); Statement statement = connection.createStatement()) {
             //выполняется SQL запрос в консоли;
             statement.execute(createTableSql);
@@ -31,24 +32,24 @@ public class UserDaoJDBCImpl implements UserDao {
             LOG.info("Table \"users\" is created!");
         } catch (SQLException e) {
             LOG.error(e.getMessage());
-            throw e;
+            throw new CommonDaoException(e.getMessage(), e);
         }
     }
 
     //Удаление таблицы;
-    public void dropUsersTable() throws SQLException {
+    public void dropUsersTable() throws CommonDaoException {
         try (Connection connection = DBUtil.getJdbcConnection(); Statement statement = connection.createStatement()) {
             statement.execute(dropUsersTableSql);
 
             LOG.info("Table \"users\" is deleted!");
         } catch (SQLException e) {
             LOG.error(e.getMessage());
-            throw e;
+            throw new CommonDaoException(e.getMessage(), e);
         }
     }
 
     //Добавление пользователя в таблицу;
-    public void saveUser(String name, String lastName, byte age) throws SQLException {
+    public void saveUser(String name, String lastName, byte age) throws CommonDaoException {
         try (Connection connection = DBUtil.getJdbcConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(insertTableSql)) {
 
@@ -60,12 +61,12 @@ public class UserDaoJDBCImpl implements UserDao {
             LOG.info("User с именем - " + name + " добавлен в базу данных!");
         } catch (SQLException e) {
             LOG.error(e.getMessage());
-            throw e;
+            throw new CommonDaoException(e.getMessage(), e);
         }
     }
 
     //Удаление пользователя по id;
-    public void removeUserById(long id) throws SQLException {
+    public void removeUserById(long id) throws CommonDaoException {
         try (Connection connection = DBUtil.getJdbcConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(removeUsersSql)) {
             preparedStatement.setLong(1, id);
@@ -74,12 +75,12 @@ public class UserDaoJDBCImpl implements UserDao {
             LOG.info("User с id - " + id + " удален из базы!");
         } catch (SQLException e) {
             LOG.error(e.getMessage());
-            throw e;
+            throw new CommonDaoException(e.getMessage(), e);
         }
     }
 
     //Вывод всех пользователей из таблицы;
-    public List<User> getAllUsers() throws SQLException {
+    public List<User> getAllUsers() throws CommonDaoException {
         List<User> allUsers = new ArrayList<>();
 
         try (Connection connection = DBUtil.getJdbcConnection();
@@ -98,20 +99,20 @@ public class UserDaoJDBCImpl implements UserDao {
             LOG.info("Все записи из таблицы User успешно получены!");
         } catch (SQLException e) {
             LOG.error(e.getMessage());
-            throw e;
+            throw new CommonDaoException(e.getMessage(), e);
         }
         return allUsers;
     }
 
     //Удаление всех пользователей из таблицы;
-    public void cleanUsersTable() throws SQLException {
+    public void cleanUsersTable() throws CommonDaoException {
         try (Connection connection = DBUtil.getJdbcConnection(); Statement statement = connection.createStatement()) {
             statement.executeUpdate(truncateUsersSql);
 
             LOG.info("Таблица \"users\" удалена успешно!");
         } catch (SQLException e) {
             LOG.error(e.getMessage());
-            throw e;
+            throw new CommonDaoException(e.getMessage(), e);
         }
     }
 }

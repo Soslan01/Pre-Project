@@ -1,6 +1,7 @@
 package jm.task.core.jdbc.dao;
 
 import jm.task.core.jdbc.model.User;
+import jm.task.core.jdbc.support.CommonDaoException;
 import jm.task.core.jdbc.util.DBUtil;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -18,7 +19,7 @@ public class UserDaoHibernateImpl implements UserDao {
     private static Logger LOG = Logger.getLogger(UserDaoHibernateImpl.class);
 
     @Override
-    public void createUsersTable() throws SQLException {
+    public void createUsersTable() throws CommonDaoException {
         try {
             Session session = DBUtil.getHibernateSession();
             Query query = session.createSQLQuery(createTableSql);
@@ -27,12 +28,12 @@ public class UserDaoHibernateImpl implements UserDao {
             LOG.info("Table \"users\" is created!");
         } catch (SQLException | HibernateException e) {
             LOG.error(e.getMessage());
-            throw e;
+            throw new CommonDaoException(e.getMessage(), e);
         }
     }
 
     @Override
-    public void dropUsersTable() throws SQLException {
+    public void dropUsersTable() throws CommonDaoException {
         try {
             Session session = DBUtil.getHibernateSession();
             Query query = session.createSQLQuery(dropUsersTableSql);
@@ -41,12 +42,12 @@ public class UserDaoHibernateImpl implements UserDao {
             LOG.info("Table \"users\" is deleted!");
         } catch (SQLException | HibernateException e) {
             LOG.error(e.getMessage());
-            throw e;
+            throw new CommonDaoException(e.getMessage(), e);
         }
     }
 
     @Override
-    public void saveUser(String name, String lastName, byte age) throws SQLException {
+    public void saveUser(String name, String lastName, byte age) throws CommonDaoException {
         try {
             User newUser = new User(name, lastName, age);
             Session session = DBUtil.getHibernateSession();
@@ -56,12 +57,12 @@ public class UserDaoHibernateImpl implements UserDao {
             LOG.info("User с именем - " + name + " добавлен в базу данных!");
         } catch (SQLException | HibernateException e) {
             LOG.error(e.getMessage());
-            throw e;
+            throw new CommonDaoException(e.getMessage(), e);
         }
     }
 
     @Override
-    public void removeUserById(long id) throws SQLException {
+    public void removeUserById(long id) throws CommonDaoException {
         try {
             User deletedUser = new User();
             deletedUser.setId(id);
@@ -73,12 +74,12 @@ public class UserDaoHibernateImpl implements UserDao {
             LOG.info("User с id - " + id + " удален из базы!");
         } catch (SQLException | HibernateException e) {
             LOG.error(e.getMessage());
-            throw e;
+            throw new CommonDaoException(e.getMessage(), e);
         }
     }
 
     @Override
-    public List<User> getAllUsers() throws SQLException {
+    public List<User> getAllUsers() throws CommonDaoException {
         try {
             Session session = DBUtil.getHibernateSession();
             List<User> users = session.createQuery("select u from User u", User.class).getResultList();
@@ -88,12 +89,12 @@ public class UserDaoHibernateImpl implements UserDao {
             return users;
         } catch (SQLException | HibernateException e) {
             LOG.error(e.getMessage());
-            throw e;
+            throw new CommonDaoException(e.getMessage(), e);
         }
     }
 
     @Override
-    public void cleanUsersTable() throws SQLException {
+    public void cleanUsersTable() throws CommonDaoException {
         try {
             Session session = DBUtil.getHibernateSession();
             Query query = session.createSQLQuery(truncateUsersSql);
@@ -103,7 +104,7 @@ public class UserDaoHibernateImpl implements UserDao {
             LOG.info("Таблица \"users\" удалена успешно!");
         } catch (SQLException | HibernateException e) {
             LOG.error(e.getMessage());
-            throw e;
+            throw new CommonDaoException(e.getMessage(), e);
         }
 
     }
