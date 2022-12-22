@@ -1,10 +1,9 @@
 package jm.task.core.jdbc;
 
 import jm.task.core.jdbc.dao.UserDaoJDBCImpl;
+import jm.task.core.jdbc.service.UserService;
 import jm.task.core.jdbc.service.UserServiceImpl;
-import jm.task.core.jdbc.util.Util;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 
 public class Main {
@@ -12,7 +11,7 @@ public class Main {
     public static void main(String[] args) throws SQLException {
         // реализуйте алгоритм здесь
 
-        UserServiceImpl service = new UserServiceImpl();
+        UserService service = new UserServiceImpl(new UserDaoJDBCImpl());
 
         //Создание таблицы;
         service.createUsersTable();
@@ -27,7 +26,7 @@ public class Main {
         service.getAllUsers();
 
         //Удаление пользователя по id;
-//        service.removeUserById(1);
+        service.removeUserById(1);
 
         //Удаление всех пользователей из таблицы;
         service.cleanUsersTable();

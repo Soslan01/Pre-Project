@@ -1,12 +1,14 @@
 package jm.task.core.jdbc.util;
 
+import org.jboss.logging.Logger;
+
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-
 public class Util {
+    private static Logger LOG = Logger.getLogger(Util.class);
     // реализуйте настройку соеденения с БД
     public static Connection getDBConnection () {
         Connection connection = null;
@@ -18,11 +20,11 @@ public class Util {
             connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/myDBTest", "root", "sos100398");
 
             if(!connection.isClosed()) {
-                System.out.println("Соединение с БД установлено!");
+                LOG.info("Соединение с БД установлено!");
             }
 
         } catch (SQLException e) {
-            System.err.println("Не удалось загрузить класс драйвера!");
+            LOG.error("Не удалось загрузить класс драйвера!");
         }
         return connection;
     }
